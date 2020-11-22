@@ -8,55 +8,66 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var showAlert = false
-    @State private var name = ""
+    @State private var countries: [String] = ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
+    @State private var correctAnswer: Int = Int.random(in: 0...2)
+    
+    @State private var score: Int = 0
+    
+    @State private var showScore = false
+    @State private var tappedAnswer = ""
+    
     var body: some View {
         ZStack {
-            // Color.. acts as a view
-            //Color.init(red: 0.1, green: 0.2, blue: 0.4).ignoresSafeArea(edges: .all)
-            // gradients
-            // other gradients are LinearGradient, CircularGradient
-            AngularGradient(gradient: Gradient(colors: [.red, .purple, .pink, .orange, .yellow, .blue]), center: .center).ignoresSafeArea(edges: .all)
-            VStack(spacing: 20) {
-                HStack {
-                    VStack(spacing: 20) {
-                        Text("Cell 1a")
-                        Text("Cell 1b")
-                        Text("Cell 1c")
-                    }
-                
-                    VStack(spacing: 20) {
-                        Text("Cell 2a").background(Color.green)
-                        Text("Cell 2b")
-                        Text("Cell 2c")
-                    }
-                    VStack(spacing: 20) {
-                        Text("Cell 3a")
-                        Text("Cell 3b")
-                        Text("Cell 3c")
-                    }
-                    VStack{
-                        Color.blue.frame(width: 100, height: 100)
-                        Text("This appears below the box")
-                    }
-                    Spacer()
+            LinearGradient(gradient: Gradient(colors: [.blue, .black]), startPoint: .top, endPoint: .bottom)
+                .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+            VStack(spacing: 30) {
+                VStack {
+                    Text("Tap the country of")
+                        .foregroundColor(.white)
+                    Text(countries[correctAnswer])
+                        .foregroundColor(.white)
+                        .font(.largeTitle)
+                        .fontWeight(.black)
                 }
                 
-                TextField("Enter name", text: $name)
-                // Buttons
-                Button(action: {
-                    print("Button was pressed!")
-                    self.showAlert = true
-                }) {
-                    HStack (spacing: 5) {
-                        Image(systemName: "pencil")
-                        Text("Something Here")
+                ForEach(0 ..< 3) {
+                    number in
+                    Button(action: {
+                        flaggTapped(number)
+                    }) {
+                        Image(self.countries[number])
+                            .renderingMode(.original)
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(Color.black, lineWidth: 1))
+                            .shadow(color: .black, radius: 3)
                     }
-                }.alert(isPresented: $showAlert) {
-                    Alert(title: Text("Greetings"), message: Text("Hello \(self.name)"), dismissButton: .default(Text("Okee Dokee")))
                 }
+                Spacer()
             }
         }
+        .alert(isPresented: $showScore) {
+            Alert(title: Text(tappedAnswer), message: Text("Your score is \(self.score)"), dismissButton: .default(Text("Ok")) {
+                    resetGame()
+                })
+        }
+    }
+    
+    func flaggTapped(_ number: Int) {
+        if number == self.correctAnswer {
+            self.tappedAnswer = "Correct"
+            self.score += 1
+        } else {
+            self.tappedAnswer = "Incorrect"
+            if self.score > 0 {
+                self.score += -1
+            }
+        }
+        self.showScore = true
+    }
+    
+    func resetGame() {
+        countries.shuffle()
+        correctAnswer = Int.random(in: 0 ... 2)
     }
 }
 
