@@ -42,6 +42,10 @@ struct ContentView: View {
                             .shadow(color: .black, radius: 3)
                     }
                 }
+                Text("Current Score: \(self.score)")
+                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    .font(.title3)
+                    .foregroundColor(.white)
                 Spacer()
             }
         }
@@ -57,7 +61,7 @@ struct ContentView: View {
             self.tappedAnswer = "Correct"
             self.score += 1
         } else {
-            self.tappedAnswer = "Incorrect"
+            self.tappedAnswer = "Incorrect, that flag is \(self.countries[number])."
             if self.score > 0 {
                 self.score += -1
             }
