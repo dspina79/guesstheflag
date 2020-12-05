@@ -41,9 +41,16 @@ struct ContentView: View {
     @State private var tappedAnswer = ""
     @State private var winningStreak = 0
     
+    @State private var selectedNum = -1
+    
+    @State private var explicitAnimationAmount = 0.0
+    @State private var otherOpacity = 1.0
+    
+    @State private var backColors = [Color.blue, Color.green];
+    
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [.blue, .green]), startPoint: .top, endPoint: .bottom)
+            LinearGradient(gradient: Gradient(colors: backColors), startPoint: .top, endPoint: .bottom)
                 .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
             VStack() {
                 Text("Tap the flag that matches")
@@ -57,10 +64,23 @@ struct ContentView: View {
                 VStack(spacing: 30) {
                     ForEach(0 ..< 3) { number in
                         Button(action: {
+                            withAnimation  {
                                 checkAnswer(number)
+                                if (number == selectedNum) {
+                                    self.explicitAnimationAmount += 360.0
+                                }
+                                self.otherOpacity = 0.25
+                            }
                         }) {
                             FlatFlagImage(imageName: self.countries[number], shadowBorder: 2)
                         }
+                        .rotation3DEffect(
+                            .degrees(number == correctAnswer ? explicitAnimationAmount : 0),
+                            axis: (x: 0.0, y: 1.0, z: 0.0)
+                        )
+                        .opacity(number == correctAnswer ? 1 : otherOpacity)
+                        
+                       
                     }
                 }
                 Text("Score: \(self.score)")
@@ -77,6 +97,7 @@ struct ContentView: View {
     }
     
     func checkAnswer(_ number: Int) {
+        self.selectedNum = number
         if number == correctAnswer {
             self.tappedAnswer = "That's correct."
             switch winningStreak {
@@ -91,6 +112,7 @@ struct ContentView: View {
             self.winningStreak += 1
             
         } else {
+            self.backColors = [Color.red, Color.orange]
             self.tappedAnswer = "That's incorrect"
             self.tappedAnswerDescription = "You clicked \(countries[number])"
             if self.score > 0 {
@@ -104,6 +126,9 @@ struct ContentView: View {
     func nextGame() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0 ... 2)
+        otherOpacity = 1.0
+        selectedNum = -1
+        backColors = [Color.blue, Color.green];
     }
 }
 
