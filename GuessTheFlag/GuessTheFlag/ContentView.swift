@@ -32,6 +32,19 @@ struct FlagImage: View {
 }
 
 struct ContentView: View {
+    let labels = [
+        "Estonia" : "Flag with three horizontal stripes of equal size. Top stripe blue, middle stripe black, bottom stripe white.",
+        "France": "Flag with three equal vertical stripes. Left stripe blue, middle stripe white, right stripe red.",
+        "Germany": "Flag with three horizontal stripes. Top stripe black, middle stripe gold. Bottom stripe red.",
+        "Ireland": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe orange.",
+        "Italy": "Flag with three vertical stripes. Left stripe green, middle stripe white, right stripe red.",
+        "Monaco" : "Monaco flag",
+        "Nigeria": "Nigerian flag",
+        "Poland": "Polish Flag",
+        "Span": "Flag with two red stripes, one on the stop and one on the bottom. A middle yellow band has a coat of arms on the left side.",
+        "UK": "Flag depicting the nion Jack",
+        "US": "Flag with stars and stripes"
+    ]
     @State private var countries: [String] = ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer: Int = Int.random(in: 0...2)
     @State private var tappedAnswerDescription = ""
@@ -74,13 +87,14 @@ struct ContentView: View {
                         }) {
                             FlatFlagImage(imageName: self.countries[number], shadowBorder: 2)
                         }
+                        .accessibility(label: Text(labels[self.countries[number], default:
+                                                          "Unknown flag"] ))
                         .rotation3DEffect(
                             .degrees(number == correctAnswer ? explicitAnimationAmount : 0),
                             axis: (x: 0.0, y: 1.0, z: 0.0)
                         )
                         .opacity(number == correctAnswer ? 1 : otherOpacity)
-                        
-                       
+                      
                     }
                 }
                 Text("Score: \(self.score)")
